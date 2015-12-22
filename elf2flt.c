@@ -638,6 +638,7 @@ dump_symbols(symbols, number_of_symbols);
 				case R_ARM_ABS32:
 					relocation_needed = 1;
 					break;
+				case R_ARM_PREL31: /* not sure */
 				case R_ARM_REL32:
 				case R_ARM_THM_PC11:
 				case R_ARM_THM_PC22:
