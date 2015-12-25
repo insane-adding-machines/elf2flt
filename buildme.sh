@@ -1,5 +1,8 @@
 #!/bin/bash
-BINUTILS=binutils-2.25.tar.gz
+
+# Adapt version to your toolchain
+# GCC 5.3 needs at least 2.25.1
+BINUTILS=binutils-2.25.1
 
 if [ -f $BINUTILS ];
 then
@@ -7,19 +10,19 @@ then
 fi
 
 echo \>\>\> Downloading binutils
-wget https://ftp.gnu.org/gnu/binutils/$BINUTILS
+wget https://ftp.gnu.org/gnu/binutils/$BINUTILS.tar.gz
 if [ $? -ne 0 ]; then
     echo Failed to download binutils
     exit 1
 fi
 
 echo \>\>\> Unpacking binutils
-tar xfz binutils-2.25.tar.gz 
+tar xfz $BINUTILS.tar.gz 
 if [ $? -ne 0 ]; then
     echo Failed to unpack binutils
     exit 1
 fi
-cd binutils-2.25
+cd $BINUTILS
 
 echo \>\>\> Configuring binutils
 ./configure
@@ -39,10 +42,10 @@ cd ..
 echo \>\>\> Configuring elf2flt
 ./configure --target=arm-none-eabi \
     --prefix=/usr \
-    --with-libbfd=`pwd`/binutils-2.25/bfd/libbfd.a \
-    --with-libiberty=`pwd`/binutils-2.25/libiberty/libiberty.a \
-    --with-bfd-include-dir=`pwd`/binutils-2.25/bfd \
-    --with-binutils-include-dir=`pwd`/binutils-2.25/include LDFLAGS=-ldl
+    --with-libbfd=`pwd`/$BINUTILS/bfd/libbfd.a \
+    --with-libiberty=`pwd`/$BINUTILS/libiberty/libiberty.a \
+    --with-bfd-include-dir=`pwd`/$BINUTILS/bfd \
+    --with-binutils-include-dir=`pwd`/$BINUTILS/include LDFLAGS=-ldl
 if [ $? -ne 0 ]; then
     echo Failed to configure elf2flt
     exit 1
