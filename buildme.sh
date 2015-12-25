@@ -4,25 +4,28 @@
 # GCC 5.3 needs at least 2.25.1
 BINUTILS=binutils-2.25.1
 
-if [ -f $BINUTILS ];
+if [ -d $BINUTILS ];
 then
-    rm $BINUTILS
+    echo Re-using existing dir: $BINUTILS
+    cd $BINUTILS
+    make clean
+else
+    echo \>\>\> Downloading binutils
+    wget https://ftp.gnu.org/gnu/binutils/$BINUTILS.tar.gz
+    if [ $? -ne 0 ]; then
+        echo Failed to download binutils
+        exit 1
+    fi
+
+    echo \>\>\> Unpacking binutils
+    tar xfz $BINUTILS.tar.gz
+    if [ $? -ne 0 ]; then
+        echo Failed to unpack binutils
+        exit 1
+    fi
+    cd $BINUTILS
 fi
 
-echo \>\>\> Downloading binutils
-wget https://ftp.gnu.org/gnu/binutils/$BINUTILS.tar.gz
-if [ $? -ne 0 ]; then
-    echo Failed to download binutils
-    exit 1
-fi
-
-echo \>\>\> Unpacking binutils
-tar xfz $BINUTILS.tar.gz 
-if [ $? -ne 0 ]; then
-    echo Failed to unpack binutils
-    exit 1
-fi
-cd $BINUTILS
 
 echo \>\>\> Configuring binutils
 ./configure
@@ -42,6 +45,7 @@ cd ..
 echo \>\>\> Configuring elf2flt
 ./configure --target=arm-none-eabi \
     --prefix=/usr \
+    --enable-always-reloc-text \
     --with-libbfd=`pwd`/$BINUTILS/bfd/libbfd.a \
     --with-libiberty=`pwd`/$BINUTILS/libiberty/libiberty.a \
     --with-bfd-include-dir=`pwd`/$BINUTILS/bfd \
