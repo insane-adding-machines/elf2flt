@@ -639,7 +639,7 @@ dump_symbols(symbols, number_of_symbols);
 					relocation_needed = 1;
 					break;
 				case R_ARM_NONE:
-				case R_ARM_PREL31: /* not sure */
+				case R_ARM_PREL31:
 				case R_ARM_REL32:
 				case R_ARM_THM_PC11:
 				case R_ARM_THM_PC22:
@@ -649,6 +649,8 @@ dump_symbols(symbols, number_of_symbols);
 				case R_ARM_GOT32:
 					relocation_needed = 0;
 					break;
+				case R_ARM_THM_JUMP24:
+					printf("R_ARM_THM_JUMP24 reloc, use long jumps instead!\n");
 				default:
 					goto bad_resolved_reloc;
 #elif defined(TARGET_m68k)

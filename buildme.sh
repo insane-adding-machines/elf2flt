@@ -1,10 +1,12 @@
 #!/bin/bash
 
+### CONFIG ###
 # Adapt version to your toolchain
 # GCC 5.3 needs at least 2.25.1
 BINUTILS=binutils-2.25.1
+#PATH_TO_TOOLCHAIN=~/gcc-arm-none-eabi-5_2-2015q4/
 PATH_TO_TOOLCHAIN=/usr
-#PATH_TO_TOOLCHAIN=~/gcc-arm-none-eabi-4_9-2015q3
+PATH_TO_LIBIBERTY_INC=$PATH_TO_TOOLCHAIN/lib/gcc/arm-none-eabi/5.3.0/plugin/include/
 TARGET=arm-none-eabi
 
 if [ -d $BINUTILS ];
@@ -34,7 +36,7 @@ fi
 cd $BINUTILS
 
 echo \>\>\> Configuring binutils
-./configure --target=$TARGET
+./configure --target=$TARGET --prefix=$PATH_TO_TOOLCHAIN --disable-nls
 if [ $? -ne 0 ]; then
     echo Failed to configure binutils
     exit 1
@@ -51,11 +53,10 @@ cd ..
 echo \>\>\> Configuring elf2flt
 ./configure --target=$TARGET \
     --prefix=$PATH_TO_TOOLCHAIN \
-    --enable-always-reloc-text \
     --with-libbfd=`pwd`/$BINUTILS/bfd/libbfd.a \
     --with-libiberty=`pwd`/$BINUTILS/libiberty/libiberty.a \
-    --with-bfd-include-dir=`pwd`/$BINUTILS/bfd \
-    --with-binutils-include-dir=`pwd`/$BINUTILS/include LDFLAGS=-ldl
+    --with-bfd-include-dir=/usr/include \
+    --with-binutils-include-dir=$PATH_TO_LIBIBERTY_INC LDFLAGS=-ldl
 if [ $? -ne 0 ]; then
     echo Failed to configure elf2flt
     exit 1
@@ -69,11 +70,14 @@ if [ $? -ne 0 ]; then
 fi
 
 echo \>\>\> Installing elf2flt
-sudo make install
+make install
 if [ $? -ne 0 ]; then
-    echo Failed to install elf2flt
-    exit 1
-else
-    echo elf2flt installed successfully
+    echo Failed to install elf2flt, retrying as root
+    sudo make install
+    if [ $? -ne 0 ]; then
+        echo Failed to install elf2flt
+        exit 1
+    fi
 fi
+echo elf2flt installed successfully
 
