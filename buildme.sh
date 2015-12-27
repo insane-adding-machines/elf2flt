@@ -6,8 +6,9 @@
 BINUTILS=binutils-2.25.1
 #PATH_TO_TOOLCHAIN=~/gcc-arm-none-eabi-5_2-2015q4/
 PATH_TO_TOOLCHAIN=/usr
-PATH_TO_LIBIBERTY_INC=$PATH_TO_TOOLCHAIN/lib/gcc/arm-none-eabi/5.3.0/plugin/include/
 TARGET=arm-none-eabi
+# Current directory
+BASEPATH=`pwd`
 
 if [ -d $BINUTILS ];
 then
@@ -33,10 +34,13 @@ if [ $? -ne 0 ]; then
     echo Failed to unpack binutils
     exit 1
 fi
-cd $BINUTILS
+cd $BASEPATH/$BINUTILS
 
 echo \>\>\> Configuring binutils
-./configure --target=$TARGET --prefix=$PATH_TO_TOOLCHAIN --disable-nls
+rm -rf build
+mkdir -p build
+cd build
+../configure --target=$TARGET --prefix=$PATH_TO_TOOLCHAIN --disable-nls
 if [ $? -ne 0 ]; then
     echo Failed to configure binutils
     exit 1
@@ -49,14 +53,14 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-cd ..
+cd $BASEPATH
 echo \>\>\> Configuring elf2flt
 ./configure --target=$TARGET \
     --prefix=$PATH_TO_TOOLCHAIN \
-    --with-libbfd=`pwd`/$BINUTILS/bfd/libbfd.a \
-    --with-libiberty=`pwd`/$BINUTILS/libiberty/libiberty.a \
-    --with-bfd-include-dir=/usr/include \
-    --with-binutils-include-dir=$PATH_TO_LIBIBERTY_INC LDFLAGS=-ldl
+    --with-libbfd=$BASEPATH/$BINUTILS/build/bfd/libbfd.a \
+    --with-libiberty=$BASEPATH/$BINUTILS/build/libiberty/libiberty.a \
+    --with-bfd-include-dir=$BASEPATH/$BINUTILS/build/bfd/ \
+    --with-binutils-include-dir=$BASEPATH/$BINUTILS/include LDFLAGS=-ldl
 if [ $? -ne 0 ]; then
     echo Failed to configure elf2flt
     exit 1
