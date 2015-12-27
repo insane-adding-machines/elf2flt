@@ -59,7 +59,7 @@ echo \>\>\> Configuring elf2flt
     --prefix=$PATH_TO_TOOLCHAIN \
     --with-libbfd=$BASEPATH/$BINUTILS/build/bfd/libbfd.a \
     --with-libiberty=$BASEPATH/$BINUTILS/build/libiberty/libiberty.a \
-    --with-bfd-include-dir=$BASEPATH/$BINUTILS/build/bfd/ \
+    --with-bfd-include-dir=$BASEPATH/$BINUTILS/bfd \
     --with-binutils-include-dir=$BASEPATH/$BINUTILS/include LDFLAGS=-ldl
 if [ $? -ne 0 ]; then
     echo Failed to configure elf2flt
