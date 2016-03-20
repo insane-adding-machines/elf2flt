@@ -13,7 +13,6 @@ PHDRS {
 SECTIONS {
 
 	.text 0x0 : {
-		. = . + 4;
 		. = ALIGN(0x4) ;
 		@SYMBOL_PREFIX@_stext = . ;
 		*(.text)
@@ -40,10 +39,19 @@ W_RODAT		*(.gnu.linkonce.r*)
 		PROVIDE(@SYMBOL_PREFIX@__ctbp = .);
 		*(.call_table_data)
 		*(.call_table_text)
-
-		. = ALIGN(0x20) ;
-		@SYMBOL_PREFIX@_etext = . ;
 	} > flatmem :text
+
+        /* .ARM.exidx name sections containing index entries for section unwinding */
+	/* .ARM.exidx is sorted, so has to go in its own output section.  */
+	 __exidx_start = .;
+	.ARM.exidx :
+	{
+		*(.ARM.exidx* .gnu.linkonce.armexidx.*)
+	} > flatmem
+	__exidx_end = .;
+
+	. = ALIGN(0x20) ;
+	@SYMBOL_PREFIX@_etext = . ;
 
 	.data : {
 		. = ALIGN(0x4) ;
@@ -170,7 +178,7 @@ TOR:		@SYMBOL_PREFIX@__DTOR_END__ = .;
 	.stack : {
 		. = ALIGN(0x4);
 		@SYMBOL_PREFIX@_stack_start = .;
-	} > flatmem
+	}
 
 	.junk 0 : { *(.rel*) *(.rela*) }
 	/DISCARD/ : { *(.note.GNU-stack) }
