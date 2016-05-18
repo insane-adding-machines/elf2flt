@@ -44,10 +44,12 @@ W_RODAT		*(.gnu.linkonce.r*)
         /* .ARM.exidx name sections containing index entries for section unwinding */
 	/* .ARM.exidx is sorted, so has to go in its own output section.  */
 	 __exidx_start = .;
-	.ARM.exidx :
+	/* .ARM.exidx : */
+	/DISCARD/ :
 	{
 		*(.ARM.exidx* .gnu.linkonce.armexidx.*)
-	} > flatmem :text
+	}
+	/* } > flatmem :text */
 	__exidx_end = .;
 
 	. = ALIGN(0x20) ;
