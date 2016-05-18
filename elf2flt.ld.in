@@ -47,7 +47,7 @@ W_RODAT		*(.gnu.linkonce.r*)
 	.ARM.exidx :
 	{
 		*(.ARM.exidx* .gnu.linkonce.armexidx.*)
-	} > flatmem
+	} > flatmem :text
 	__exidx_end = .;
 
 	. = ALIGN(0x20) ;
