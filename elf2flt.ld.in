@@ -48,6 +48,7 @@ W_RODAT		*(.gnu.linkonce.r*)
 	/DISCARD/ :
 	{
 		*(.ARM.exidx* .gnu.linkonce.armexidx.*)
+        *(.ARM.extab* .gnu.linkonce.armextab.*)
 	}
 	/* } > flatmem :text */
 	__exidx_end = .;
